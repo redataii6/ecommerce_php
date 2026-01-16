@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order #{{ order.id }} - Mini E-Commerce{% endblock %}
+
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_me_orders') }}">My Orders</a></li>
+        <li class="breadcrumb-item active">Order #{{ order.id }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-receipt"></i> Order #{{ order.id }}</h5>
+                {% if order.status == 'pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% elseif order.status == 'processing' %}
+                    <span class="badge bg-info">Processing</span>
+                {% elseif order.status == 'shipped' %}
+                    <span class="badge bg-primary">Shipped</span>
+                {% elseif order.status == 'delivered' %}
+                    <span class="badge bg-success">Delivered</span>
+                {% elseif order.status == 'cancelled' %}
+                    <span class="badge bg-danger">Cancelled</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6>Order Information</h6>
+                        <p class="mb-1"><strong>Date:</strong> {{ order.createdAt|date('M j, Y H:i') }}</p>
+                        <p class="mb-1"><strong>Status:</strong> {{ order.status|capitalize }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Shipping Information</h6>
+                        <p class="mb-1"><strong>Name:</strong> {{ order.customerName }}</p>
+                        <p class="mb-1"><strong>Email:</strong> {{ order.customerEmail }}</p>
+                        <p class="mb-1"><strong>Phone:</strong> {{ order.phone }}</p>
+                        <p class="mb-0"><strong>Address:</strong><br>{{ order.address|nl2br }}</p>
+                    </div>
+                </div>
+
+                <h6>Order Items</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-end">Price</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td>{{ item.productName }}</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">{{ item.price|number_format(2, '.', ',') }} €</td>
+                            <td class="text-end">{{ item.subtotal|number_format(2, '.', ',') }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td class="text-end"><strong>{{ order.total|number_format(2, '.', ',') }} €</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">Order Status Timeline</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <strong>Order Placed</strong>
+                        <br><small class="text-muted">{{ order.createdAt|date('M j, Y H:i') }}</small>
+                    </li>
+                    {% if order.status in ['processing', 'shipped', 'delivered'] %}
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <strong>Processing</strong>
+                    </li>
+                    {% endif %}
+                    {% if order.status in ['shipped', 'delivered'] %}
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <strong>Shipped</strong>
+                    </li>
+                    {% endif %}
+                    {% if order.status == 'delivered' %}
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <strong>Delivered</strong>
+                    </li>
+                    {% endif %}
+                    {% if order.status == 'cancelled' %}
+                    <li class="mb-2">
+                        <i class="bi bi-x-circle-fill text-danger"></i>
+                        <strong>Cancelled</strong>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a href="{{ path('app_me_orders') }}" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-arrow-left"></i> Back to My Orders
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

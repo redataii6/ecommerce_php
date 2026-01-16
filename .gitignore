@@ -1,0 +1,18 @@
+# Symfony
+symfony/vendor/
+symfony/var/
+
+# Env
+symfony/.env
+symfony/.env.local
+symfony/.env.*.local
+
+# Composer
+symfony/composer.phar
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
